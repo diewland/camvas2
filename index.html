@@ -1,0 +1,35 @@
+<!--
+* https://github.com/diewland/camvas/blob/master/javascripts/camvas.js
+* https://davidwalsh.name/browser-camera
+-->
+
+<video id="video" width="640" height="480"></video>
+<canvas id="canvas" width='640' height='480'></canvas>
+
+<script>
+  // Grab elements, create settings, etc.
+  var video = document.getElementById('video');
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
+
+  // Get access to the camera!
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // Not adding `{ audio: true }` since we only want video now
+      navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+          //video.src = window.URL.createObjectURL(stream);
+          video.srcObject = stream;
+          video.play();
+
+          // loop render to canvas
+          var last = Date.now()
+          var loop = function() {
+            var dt = Date.now() - last
+            context.drawImage(video, 0, 0);
+            last = Date.now()
+            requestAnimationFrame(loop) 
+          }
+          requestAnimationFrame(loop) 
+      });
+  }
+
+</script>
