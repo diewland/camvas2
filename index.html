@@ -19,7 +19,7 @@
   var context = canvas.getContext('2d');
 
   // max resolution for each device
-  let profile = { video: {width: {ideal: 9999}, height: {ideal: 9999}} };
+  let profile = { video: {width: {ideal: 9999}, height: {ideal: 9999}}, facingMode: 'user' };
 
   // Get access to the camera!
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -33,20 +33,19 @@
           let ch = null;
 
           // loop render to canvas
-          // TODO https://github.com/diewland/any2canvas/blob/master/video2canvas.js
           var last = Date.now()
           var loop = function() {
             var dt = Date.now() - last
 
-            // prevent blur by keep ratio 1:1 between video & canvas
+            // update video width/height to canvas (prevent canvas blur)
             if ((cw == null) && (ch == null) &&
                 (video.videoWidth > 0) && (video.videoHeight > 0)) {
               canvas.width = cw = video.videoWidth;
               canvas.height = ch = video.videoHeight;
             }
 
+            // draw video to canvas
             context.drawImage(video, 0, 0);
-            //context.drawImage(video, 0, 0, canvas.width, canvas.height); // strech
 
             last = Date.now()
             requestAnimationFrame(loop) 
