@@ -33,6 +33,7 @@
           let ch = null;
 
           // loop render to canvas
+          // TODO https://github.com/diewland/any2canvas/blob/master/video2canvas.js
           var last = Date.now()
           var loop = function() {
             var dt = Date.now() - last
@@ -44,8 +45,8 @@
               canvas.height = ch = video.videoHeight;
             }
 
-            //context.drawImage(video, 0, 0);
-            context.drawImage(video, 0, 0, canvas.width, canvas.height); // strech
+            context.drawImage(video, 0, 0);
+            //context.drawImage(video, 0, 0, canvas.width, canvas.height); // strech
 
             last = Date.now()
             requestAnimationFrame(loop) 
