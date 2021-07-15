@@ -3,8 +3,14 @@
 * https://davidwalsh.name/browser-camera
 -->
 
-<video id="video" width="640" height="480" style='display: none;'></video>
-<canvas id="canvas" width='640' height='480'></canvas>
+<video id="video"></video>
+<canvas id="canvas"></canvas>
+
+<style>
+  html, body { padding: 0px; margin: 0px; }
+  canvas { width: 100%; }
+  video { display: none; }
+</style>
 
 <script>
   // Grab elements, create settings, etc.
@@ -12,19 +18,35 @@
   var canvas = document.getElementById('canvas');
   var context = canvas.getContext('2d');
 
+  // max resolution for each device
+  let profile = { video: {width: {ideal: 9999}, height: {ideal: 9999}} };
+
   // Get access to the camera!
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       // Not adding `{ audio: true }` since we only want video now
-      navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+      navigator.mediaDevices.getUserMedia(profile).then(function(stream) {
           //video.src = window.URL.createObjectURL(stream);
           video.srcObject = stream;
           video.play();
+
+          let cw = null;
+          let ch = null;
 
           // loop render to canvas
           var last = Date.now()
           var loop = function() {
             var dt = Date.now() - last
-            context.drawImage(video, 0, 0);
+
+            // prevent blur by keep ratio 1:1 between video & canvas
+            if ((cw == null) && (ch == null) &&
+                (video.videoWidth > 0) && (video.videoHeight > 0)) {
+              canvas.width = cw = video.videoWidth;
+              canvas.height = ch = video.videoHeight;
+            }
+
+            //context.drawImage(video, 0, 0);
+            context.drawImage(video, 0, 0, canvas.width, canvas.height); // strech
+
             last = Date.now()
             requestAnimationFrame(loop) 
           }
